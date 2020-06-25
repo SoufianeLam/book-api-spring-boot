@@ -7,11 +7,10 @@ import com.book.model.Book;
 import com.book.repository.AuthorRepository;
 import com.book.repository.BookRepository;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class BookServiceImpl implements BookService {
@@ -25,35 +24,37 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public ResponseEntity<List<Book>> findAllBooks() {
-        if (bookRepository.findAll().isEmpty())
+    public List<Book> findAllBooks() {
+        List<Book> books = bookRepository.findAll();
+        if (books.isEmpty())
             throw new NotFoundException("The database is empty!");
-        return new ResponseEntity<List<Book>>(bookRepository.findAll(), HttpStatus.OK);
+        return books;
     }
 
     @Override
-    public ResponseEntity<Book> findBookById(Integer id) {
-        if (!bookRepository.findById(id).isPresent())
+    public Book findBookById(Integer id) {
+        Optional<Book> book = bookRepository.findById(id);
+        if (!book.isPresent())
             throw new NotFoundException("Book Not Found!");
-        return new ResponseEntity<Book>(bookRepository.findById(id).get(), HttpStatus.OK);
+        return book.get();
     }
 
     @Override
-    public ResponseEntity<Book> save(Book book) throws ConflictException {
+    public Book save(Book book) throws ConflictException {
         for (Author author : book.getAuthors()) {
             if (!authorRepository.findById(author.getIdAuthor()).isPresent())
                 throw new NotFoundException("Author not found!");
         }
         if (!bookRepository.findByIsbn(book.getIsbn()).isPresent()) {
             Book newBook = bookRepository.saveAndFlush(book);
-            return new ResponseEntity<Book>(newBook, HttpStatus.CREATED);
+            return newBook;
         } else {
             throw new ConflictException("This book is already exist!");
         }
     }
 
     @Override
-    public ResponseEntity<Book> updateBook(Book newBook, Integer id) {
+    public Book updateBook(Book newBook, Integer id) {
         for (Author author : newBook.getAuthors()) {
             if (!authorRepository.findById(author.getIdAuthor()).isPresent())
                 throw new NotFoundException("Author not found!");
@@ -67,15 +68,13 @@ public class BookServiceImpl implements BookService {
         book.setIsbn(newBook.getIsbn());
         book.setAuthors(newBook.getAuthors());
         book.setCreatedAt(book.getCreatedAt());
-        final Book updatedBook = bookRepository.save(book);
-        return ResponseEntity.ok(updatedBook);
+        return bookRepository.save(book);
     }
 
     @Override
-    public ResponseEntity<Book> deleteBookById(Integer id) {
+    public void deleteBookById(Integer id) {
         Book book = bookRepository.findById(id).orElseThrow(() -> new NotFoundException("Book Not Found!"));
         bookRepository.deleteById(id);
-        return new ResponseEntity<Book>(HttpStatus.OK);
     }
 
 }

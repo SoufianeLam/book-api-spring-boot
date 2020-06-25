@@ -7,13 +7,14 @@ import java.util.List;
 
 public interface AuthorService {
 
-    ResponseEntity<List<Author>> findAllAuthors();
+    List<Author> findAllAuthors();
 
-    ResponseEntity<Author> findAuthorById(Integer id);
+    Author findAuthorById(Integer id);
+
+    Author save(Author author);
+
+    Author updateAuthor(Author author, Integer id);
 
     ResponseEntity<Object> deleteAuthorById(Integer id);
 
-    ResponseEntity<Author> save(Author author);
-
-    ResponseEntity<Author> updateAuthor(Author author, Integer id);
 }

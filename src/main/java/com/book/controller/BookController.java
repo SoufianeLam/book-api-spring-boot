@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 
-@CrossOrigin("*")
 @RestController
 @RequestMapping(BookController.BASE_URL)
 @Tag(name = "book", description = "the Book API")
@@ -34,7 +33,7 @@ public class BookController {
             @ApiResponse(responseCode = "200", description = "Successful operation",
                     content = @Content(schema = @Schema(implementation = Book.class)))})
     public ResponseEntity<List<Book>> getAll() {
-        return bookService.findAllBooks();
+        return ResponseEntity.ok(bookService.findAllBooks());
     }
 
     @GetMapping("/{id}")
@@ -43,7 +42,7 @@ public class BookController {
             @ApiResponse(responseCode = "200", description = "Successful operation"),
             @ApiResponse(responseCode = "404", description = "Book Not Found!")})
     public ResponseEntity<Book> get(@PathVariable("id") Integer id) {
-        return bookService.findBookById(id);
+        return ResponseEntity.ok(bookService.findBookById(id));
     }
 
     @PostMapping

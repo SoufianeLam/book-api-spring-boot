@@ -1,19 +1,19 @@
 package com.book.service;
 
 import com.book.model.Book;
-import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
 public interface BookService {
 
-    ResponseEntity<List<Book>> findAllBooks();
+    List<Book> findAllBooks();
 
-    ResponseEntity<Book> findBookById(Integer id);
+    Book findBookById(Integer id);
 
-    ResponseEntity<Book> deleteBookById(Integer id);
+    Book save(Book book);
 
-    ResponseEntity<Book> save(Book book);
+    Book updateBook(Book book, Integer id);
 
-    ResponseEntity<Book> updateBook(Book book, Integer id);
+    void deleteBookById(Integer id);
+
 }
